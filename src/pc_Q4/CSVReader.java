@@ -3,6 +3,7 @@ package pc_Q4;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 
 public class CSVReader {
 
@@ -23,12 +24,15 @@ public class CSVReader {
             //String cvsSplitBy = ","; esta variável fora utilizada apenas
             //uma vez e com valor definido, dessa forma ela fora removida.
             
-            User[] users = new User[10];
-            
+            User[] userArray = new User[2];
             //usando o Array de User como fora imposto na questao,
             //implica em ter de se tratar a injeção de códigos nesse array.
             //Para tanto, usarei whitelisting para impedir que a entrada
             //(presente no arquivo .csv) não sanitizada seja de conteúdo malicioso.
+            
+            User[] users = (User[]) changeArraySize(userArray, 10);
+            //Aqui o tamanho do Array é passado em tempo de execução
+            //como fora colocado como requisito.
             
             int i = 0;
             while ((line = br.readLine()) != null) {
@@ -54,5 +58,15 @@ public class CSVReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public static Object changeArraySize(Object obj, int len) {
+    	Class<?> arr = obj.getClass().getComponentType();
+    	Object newArray = Array.newInstance(arr, len);
+    	
+    	//do array copy
+    	int co = Array.getLength(obj);
+    	System.arraycopy(obj, 0, newArray, 0, co);
+    	
+    	return newArray;
     }
 }
